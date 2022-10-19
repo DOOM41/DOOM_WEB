@@ -2,7 +2,7 @@
 from django.db.models import QuerySet
 
 # Rest
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelModelViewSet
 from rest_framework.generics import ListAPIView
 
 #Apps
