@@ -3,6 +3,7 @@ from pathlib import Path
 import os
 import sys
 from web3 import Web3
+from web3.middleware.geth_poa import geth_poa_middleware
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.append(BASE_DIR)
@@ -22,8 +23,10 @@ print(f"Is connected: {web3.isConnected()}")
 print(f"gas price: {web3.eth.gas_price} BNB")
 print(f"current block number: {web3.eth.block_number}")
 print(f"number of current chain is {web3.eth.chain_id}") 
-
+web3.middleware_onion.inject(geth_poa_middleware, layer=0)
+web3.eth.account.enable_unaudited_hdwallet_features()
 ALLOWED_HOSTS = []
+MNEMONIC = get_env_variable("MNEMONIC")
 
 ROOT_URLCONF = 'settings.urls'
 

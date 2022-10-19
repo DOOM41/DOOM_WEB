@@ -12,6 +12,7 @@ from rest_framework.response import Response
 #Apps
 from abstracts.validators import APIValidator
 
+from web3 import Web3
 
 class ResponseMixin:
     """ResponseMixin."""
@@ -20,6 +21,33 @@ class ResponseMixin:
         return Response({
             "response": data
         })
+
+
+class PayMixin:
+    def build_txn(
+            self,
+            *,
+            web3: Web3,
+            from_address: str,
+            to_address: str,
+            amount: float,  
+        ) -> dict[str, int | str]:
+        gas_price = web3.eth.gas_price
+        
+        gas = 2_000_000
+
+        nonce = web3.eth.getTransactionCount(from_address)
+
+        txn = {
+        'chainId': web3.eth.chain_id,
+        'from': from_address,
+        'to': to_address,
+        'value': int(Web3.toWei(amount, 'ether')),
+        'nonce': nonce, 
+        'gasPrice': gas_price,
+        'gas': gas,
+        }
+        return txn
 
 
 class SendEmailMixin:
