@@ -9,6 +9,7 @@ from rest_framework.routers import DefaultRouter
 
 #Apps
 from apps.auths.views import UserViewSet
+from apps.transactions.views import TransactionsViewSet
 
 
 urlpatterns = [
@@ -29,6 +30,9 @@ router: DefaultRouter = DefaultRouter(
 
 router.register(
     'registration', UserViewSet
+)
+router.register(
+    'transactions', TransactionsViewSet
 )
 
 urlpatterns += [

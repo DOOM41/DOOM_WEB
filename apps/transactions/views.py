@@ -12,7 +12,7 @@ from transactions.models import Transactions
 from transactions.serializers import TransSerializers
 
 
-class TransSet(
+class TransactionsViewSet(
     ViewSet,
     ListAPIView
 ):

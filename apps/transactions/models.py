@@ -1,3 +1,4 @@
+#django
 from django.db.models import(
     CharField,
     IntegerField,
@@ -6,7 +7,8 @@ from django.db.models import(
     Model,
     TextChoices
 )
-from datetime import datetime, timedelta
+
+#apps
 from auths.models import CustomUser
 from abstracts.models import AbstractsDateTime
 
