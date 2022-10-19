@@ -14,7 +14,7 @@ from abstracts.validators import APIValidator
 
 
 class ResponseMixin:
-    '''ResponseMixin.'''
+    """ResponseMixin."""
 
     def get_json_response(self, data: dict[Any, Any]) -> Response:
         return Response({
@@ -33,8 +33,8 @@ class SendEmailMixin:
     def send_to_authentifacate(self, pin, user_email: str) -> str:
         try:
             send_mail(
-                'Check pin',
-                f"das00 {pin}",
+                f'Здравствуйте, {user_email}',
+                f"Введите этот пин-код, чтобы подтвердить вашу почту: {pin}",
                 EMAIL_HOST_USER,
                 [user_email],
                 fail_silently=False,

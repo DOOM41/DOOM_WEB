@@ -47,7 +47,7 @@ class Transactions(Model):
         BankAccount, related_name="send_transactions", on_delete=PROTECT
     )
     receiver: BankAccount = ForeignKey(
-        BankAccount, related_name="receiv_transactions", on_delete=PROTECT
+        BankAccount, related_name="receiver_transactions", on_delete=PROTECT
     )
     status = CharField(
         verbose_name='Статус',
