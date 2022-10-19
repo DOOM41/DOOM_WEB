@@ -3,7 +3,7 @@ from django.db.models import QuerySet
 
 # Rest
 from rest_framework.generics import RetrieveAPIView
-from rest_framework.viewsets import ViewSet
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -18,7 +18,7 @@ from auths.models import CustomUser
 class UserViewSet(
     SendEmailMixin,
     ResponseMixin,
-    ViewSet,
+    ModelViewSet,
     RetrieveAPIView,
 ):
     queryset: QuerySet[CustomUser] = CustomUser.objects.all()
