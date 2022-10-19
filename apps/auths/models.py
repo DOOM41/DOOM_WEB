@@ -65,7 +65,7 @@ class CustomUserManager(BaseUserManager):
                 status=404
             )
 
-"""123"""
+
 class CustomUser(
     AbstractBaseUser,
     PermissionsMixin,
