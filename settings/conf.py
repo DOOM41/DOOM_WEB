@@ -16,7 +16,7 @@ SECRET_KEY = get_env_variable("SECRET_KEY")
 DEBUG = get_env_variable("DEBUG")
 
 
-binance_testnet_rpc_url = "https://data-seed-prebsc-1-s1.binance.org:8545/"
+binance_testnet_rpc_url = "HTTP://127.0.0.1:7545"
 web3 = Web3(Web3.HTTPProvider(binance_testnet_rpc_url))
 print(f"Is connected: {web3.isConnected()}")
 print(f"gas price: {web3.eth.gas_price} BNB")
