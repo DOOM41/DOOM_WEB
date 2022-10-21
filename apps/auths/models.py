@@ -42,10 +42,12 @@ class CustomUserManager(BaseUserManager):
 
     def create_superuser(self, email: str, login, password: str) -> 'CustomUser':
         user: 'CustomUser' = self.model(
+            is_staff=True,
             email=self.normalize_email(email),
             login=login,
             password=password
         )
+        user.is_staff: bool = True
         user.is_superuser: bool = True
         user.set_password(password)
         user.save(using=self._db)

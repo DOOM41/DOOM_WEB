@@ -10,6 +10,7 @@ from rest_framework.routers import DefaultRouter
 #Apps
 from apps.auths.views import UserViewSet
 from apps.transactions.views import TransactionsViewSet
+# from transactions.views import BankAccountViewSet
 
 
 urlpatterns = [
@@ -34,6 +35,9 @@ router.register(
 router.register(
     'transactions', TransactionsViewSet
 )
+# router.register(
+#     'bank', BankAccountViewSet
+# )
 
 urlpatterns += [
     path(

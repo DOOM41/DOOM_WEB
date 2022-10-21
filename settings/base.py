@@ -1,5 +1,6 @@
 from settings.conf import *
 
+
 DJANGO_AND_THIRD_PARTY_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -11,13 +12,13 @@ DJANGO_AND_THIRD_PARTY_APPS = [
     'rest_framework',
 ]
 
-PROJECT_APS = [
+PROJECT_APPS = [
     'abstracts.apps.AbstractsConfig',
     'auths.apps.AuthsConfig',
     'transactions.apps.TransactionsConfig',
 ]
 
-INSTALLED_APPS = DJANGO_AND_THIRD_PARTY_APPS + PROJECT_APS
+INSTALLED_APPS = DJANGO_AND_THIRD_PARTY_APPS + PROJECT_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

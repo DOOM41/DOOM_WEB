@@ -4,6 +4,7 @@ import os
 import sys
 from web3 import Web3
 
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.append(BASE_DIR)
 sys.path.append(os.path.join(BASE_DIR, 'apps'))
