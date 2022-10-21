@@ -3,6 +3,7 @@ from django.db.models import (
     EmailField,
     CharField,
     QuerySet,
+    BooleanField
 )
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -49,6 +50,7 @@ class CustomUserManager(BaseUserManager):
         )
         user.is_staff: bool = True
         user.is_superuser: bool = True
+        user.is_staff: bool = True
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -83,6 +85,7 @@ class CustomUser(
         unique=True,
         max_length=11,
     )
+    is_staff= BooleanField(default=False)
     verificated_code = CharField('Код подтверждения', max_length=5, null=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['login']
