@@ -4,6 +4,7 @@ from rest_framework.serializers import (
     CharField,
     IntegerField
 )
+from transactions.models import BankAccount
 from transactions.models import Transactions
 
 
@@ -19,4 +20,10 @@ class PaySerialize(Serializer):
     payment = IntegerField(required=False)
 
     class Meta:
+        field = '__all__'
+
+class BankAccountSerializers(ModelSerializer):
+
+    class Meta:
+        model = BankAccount
         field = '__all__'

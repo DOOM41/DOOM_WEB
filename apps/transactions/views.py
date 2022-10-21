@@ -1,5 +1,5 @@
 # Django
-from xml.dom.minidom import AttributeList
+import random
 from django.db.models import QuerySet
 from settings.conf import web3, MNEMONIC
 
@@ -10,12 +10,19 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.request import Request
+
 # Apps
-from transactions.models import Transactions
+from transactions.models import (
+    Transactions,
+    BankAccount
+)
 from abstracts.mixins import PayMixin
 
 # Serializer
-from transactions.serializers import TransSerializers, PaySerialize
+from transactions.serializers import (
+    TransSerializers, PaySerialize,
+    BankAccountSerializers
+)
 
 # Web 3
 from web3 import Web3
@@ -23,6 +30,7 @@ from hexbytes import HexBytes
 from attributedict.collections import AttributeDict
 from web3.contract import Contract
 import json
+
 
 class TransactionsViewSet(
     ModelViewSet,
@@ -77,7 +85,6 @@ class TransactionsViewSet(
         return Response(data={
             'balance ether': my_t
         }, status=201)
-
 
     @action(
         methods=['post'],
@@ -167,7 +174,8 @@ class TransactionsViewSet(
 	}
 ]''')
         my_contract_address = '0x66B7ac8172a58558271ea600f419059EAf245BB8'
-        my_contract:Contract = web3.eth.contract(my_contract_address, abi=ERC20_ABI)
+        my_contract: Contract = web3.eth.contract(
+            my_contract_address, abi=ERC20_ABI)
         all_functions = my_contract.all_functions()
         print(all_functions)
         wallet_address = request.data['wallet_address']
@@ -176,3 +184,34 @@ class TransactionsViewSet(
         return Response(data={
             'balance ether': balance_of_token
         }, status=201)
+
+
+class BankAccountViewSet(
+    ModelViewSet,
+    ListAPIView
+):
+    queryset: QuerySet[BankAccount] = BankAccount.objects.all()
+    serializer_class = BankAccountSerializers
+
+    @action(
+        methods=['post'],
+        detail=False,
+        url_path='open-bank-account',
+        permission_classes=(
+            AllowAny,
+        )
+    )
+    def open_bank_account(self, request: Request):
+        a = random.randint(
+            1000000000000000000000000000000,
+            9000000000000000000000000000000
+        )
+
+        owner = request.data['id']
+        address = '0xl' + str(a)
+        balance = 0
+
+        BankAccount.objects.create(
+            owner, address, balance
+        )
+        return Response(status=201)

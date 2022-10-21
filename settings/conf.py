@@ -5,6 +5,7 @@ import sys
 from web3 import Web3
 from web3.middleware.geth_poa import geth_poa_middleware
 
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.append(BASE_DIR)
 sys.path.append(os.path.join(BASE_DIR, 'apps'))

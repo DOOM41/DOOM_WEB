@@ -61,6 +61,10 @@ class Transactions(Model):
         verbose_name='Сумма перевода',
         null=False,
     )
+    count_of_transactions = IntegerField(
+        verbose_name='Количество транзакций',
+        default=0
+    )
 
     def __str__(self) -> str:
         return f'{self.sender}->{self.receiver}:{self.amount}'
