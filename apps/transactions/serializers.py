@@ -17,6 +17,7 @@ class TransSerializers(ModelSerializer):
 
 class PaySerialize(Serializer):
     wallet_address = CharField(required=False)
+    private_key = CharField(required=False)
     payment = IntegerField(required=False)
 
     class Meta:

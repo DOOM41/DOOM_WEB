@@ -1,13 +1,15 @@
 # Django
-import random
 from django.db.models import QuerySet
-from settings.conf import web3, MNEMONIC
+from settings.conf import web3, MNEMONIC, ABI, my_contract_address
 
 # Rest
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.generics import ListAPIView
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import (
+    AllowAny,
+    IsAuthenticated
+)
 from rest_framework.response import Response
 from rest_framework.request import Request
 
@@ -25,9 +27,8 @@ from transactions.serializers import (
 )
 
 # Web 3
-from web3 import Web3
+from web3 import Web3, Account
 from hexbytes import HexBytes
-from attributedict.collections import AttributeDict
 from web3.contract import Contract
 import json
 
@@ -70,8 +71,7 @@ class TransactionsViewSet(
             signed_txn.rawTransaction
         )
         txn = web3.eth.get_transaction(txn_hash.hex())
-        txn_receipt: AttributeDict = web3.eth.get_transaction_receipt(
-            txn_hash.hex())
+        txn_receipt = web3.eth.get_transaction_receipt(txn_hash.hex())
         my_t = {}
         for key, value in txn_receipt.items():
             try:
@@ -96,122 +96,61 @@ class TransactionsViewSet(
     )
     def pay_with_contract(self, request: Request):
         serializer_class = PaySerialize
-        # # wallet_address = request.data['wallet_address']
-        # # payment = request.data['payment']
-        # my_address = '0x328A0e205c6d68cF76e0778f22bD747ec76B9159'
-        # account = web3.eth.account.from_mnemonic(MNEMONIC)
-        # private_key = account.privateKey
-        # # balance = web3.eth.get_balance(wallet_address)
-        ERC20_ABI = json.loads('''[
-	{
-		"inputs": [],
-		"name": "payForItem",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "targetAddr",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "transferTo",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"inputs": [],
-		"name": "withdrawAll",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "owner",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "payments",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	}
-]''')
-        my_contract_address = '0x66B7ac8172a58558271ea600f419059EAf245BB8'
+        ERC20_ABI = json.loads(str(ABI))
+        my_address = '0x328A0e205c6d68cF76e0778f22bD747ec76B9159'
+        account = web3.eth.account.from_mnemonic(MNEMONIC)
+        private_key = account.privateKey
         my_contract: Contract = web3.eth.contract(
             my_contract_address, abi=ERC20_ABI)
-        all_functions = my_contract.all_functions()
-        print(all_functions)
-        wallet_address = request.data['wallet_address']
-        payment = request.data['payment']
-        balance_of_token = my_contract.functions
+        dict_transaction = {
+            'chainId': web3.eth.chain_id,
+            'from': my_address,
+            'gasPrice': web3.eth.gas_price,
+            'nonce': web3.eth.getTransactionCount(my_address),
+        }
+        transaction = my_contract.functions.withdrawAll().buildTransaction(dict_transaction)
+        signed_txn = web3.eth.account.signTransaction(transaction, private_key)
+
+        txn_hash = web3.eth.sendRawTransaction(signed_txn.rawTransaction)
         return Response(data={
-            'balance ether': balance_of_token
+            'balance ether': transaction
         }, status=201)
-
-
-class BankAccountViewSet(
-    ModelViewSet,
-    ListAPIView
-):
-    queryset: QuerySet[BankAccount] = BankAccount.objects.all()
-    serializer_class = BankAccountSerializers
 
     @action(
         methods=['post'],
         detail=False,
-        url_path='open-bank-account',
+        url_path='pay-for-item',
         permission_classes=(
             AllowAny,
         )
     )
-    def open_bank_account(self, request: Request):
-        a = random.randint(
-            1000000000000000000000000000000,
-            9000000000000000000000000000000
-        )
+    def pay_for_item(self, request: Request):
+        serializer_class = PaySerialize
+        ERC20_ABI = json.loads(str(ABI))
+        wallet_address = request.data['wallet_address']
+        private_key = request.data['private_key']
+        pay = Web3.toWei(request.data['payment'], 'ether')
 
-        owner = request.data['id']
-        address = '0xl' + str(a)
-        balance = 0
-
-        BankAccount.objects.create(
-            owner, address, balance
-        )
-        return Response(status=201)
+        my_contract: Contract = web3.eth.contract(
+            my_contract_address, abi=ERC20_ABI)
+        dict_transaction = {
+            'chainId': web3.eth.chain_id,
+            'from': wallet_address,
+            'gasPrice': web3.eth.gas_price,
+            'value': pay,
+            'nonce': web3.eth.getTransactionCount(wallet_address),
+        }
+        transaction = my_contract.functions.payForItem().buildTransaction(dict_transaction)
+        signed_txn = web3.eth.account.signTransaction(transaction, private_key)
+        my_t = {}
+        print(len(web3.eth.accounts))
+        acc, mnemonic = web3.eth.account.create_with_mnemonic()
+        account = Account.from_mnemonic(mnemonic)
+        print(account.privateKey.hex())
+        balance = web3.eth.get_balance(account.address)
+        return Response(data={
+            'balance ether': transaction,
+            'pay': pay,
+            'Комиссия': transaction['gas']*transaction['gasPrice'],
+            'data': balance,
+        }, status=201)

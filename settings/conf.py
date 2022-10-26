@@ -17,17 +17,15 @@ SECRET_KEY = get_env_variable("SECRET_KEY")
 
 DEBUG = get_env_variable("DEBUG")
 
+ALLOWED_HOSTS = []
 
 binance_testnet_rpc_url = "HTTP://127.0.0.1:7545"
 web3 = Web3(Web3.HTTPProvider(binance_testnet_rpc_url))
-print(f"Is connected: {web3.isConnected()}")
-print(f"gas price: {web3.eth.gas_price} BNB")
-print(f"current block number: {web3.eth.block_number}")
-print(f"number of current chain is {web3.eth.chain_id}") 
 web3.middleware_onion.inject(geth_poa_middleware, layer=0)
 web3.eth.account.enable_unaudited_hdwallet_features()
-ALLOWED_HOSTS = []
 MNEMONIC = get_env_variable("MNEMONIC")
+ABI = get_env_variable("ABI")
+my_contract_address = '0x817FEe66aECe8F7F79809ccD288B0e28e4500272'
 
 ROOT_URLCONF = 'settings.urls'
 
