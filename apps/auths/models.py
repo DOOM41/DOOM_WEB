@@ -85,7 +85,7 @@ class CustomUser(
         unique=True,
         max_length=11,
     )
-    is_staff= BooleanField(default=False)
+    is_staff = BooleanField(default=False)
     verificated_code = CharField('Код подтверждения', max_length=5, null=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['login']

@@ -8,8 +8,9 @@ from django.conf.urls.static import static
 from rest_framework.routers import DefaultRouter
 
 #Apps
-from apps.auths.views import UserViewSet
-from apps.transactions.views import TransactionsViewSet
+from auths.views import UserViewSet
+from transactions.views import TransactionsViewSet
+from bank_account.views import BankAccountViewSet
 # from transactions.views import BankAccountViewSet
 
 
@@ -35,9 +36,9 @@ router.register(
 router.register(
     'transactions', TransactionsViewSet
 )
-# router.register(
-#     'bank', BankAccountViewSet
-# )
+router.register(
+    'bank', BankAccountViewSet
+)
 
 urlpatterns += [
     path(

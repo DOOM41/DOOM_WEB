@@ -23,7 +23,6 @@ from abstracts.mixins import PayMixin
 # Serializer
 from transactions.serializers import (
     TransSerializers, PaySerialize,
-    BankAccountSerializers
 )
 
 # Web 3

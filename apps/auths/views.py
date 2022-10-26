@@ -1,4 +1,6 @@
 # Django
+from typing import Any, Type
+
 from django.db.models import QuerySet
 
 # Rest
@@ -10,19 +12,45 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 
 # Apps
-from abstracts.mixins import ResponseMixin, SendEmailMixin
+from abstracts.mixins import SendEmailMixin
+from auths.mixins import ResponseMixinAuth
+from auths.paginators import AbstractPageNumberPaginator
 from auths.serializers import UserSerializer
 from auths.models import CustomUser
 
 
+
+
 class UserViewSet(
     SendEmailMixin,
-    ResponseMixin,
+    ResponseMixinAuth,
     ModelViewSet,
     RetrieveAPIView,
 ):
     queryset: QuerySet[CustomUser] = CustomUser.objects.all()
     serializer_class = UserSerializer
+    pagination_class: Type[AbstractPageNumberPaginator] = \
+        AbstractPageNumberPaginator
+
+
+    def list(self, request: Request) -> Response:
+
+        paginator: AbstractPageNumberPaginator = \
+            self.pagination_class()
+
+        objects: list[Any] = paginator.paginate_queryset(
+            self.queryset,
+            request
+        )
+        serializer: UserSerializer = \
+            UserSerializer(
+                objects,
+                many=True
+            )
+        return self.get_json_response(
+            serializer.data,
+            paginator
+        )
 
     def create(self, request: Request):
         login = request.data['login']
@@ -32,8 +60,7 @@ class UserViewSet(
         CustomUser.objects.create_user(
             email, login, pin, password
         )
-        self.send_to_authentifacate(pin, email)
-        return Response(status=201)
+
 
     @action(
         methods=['post'],

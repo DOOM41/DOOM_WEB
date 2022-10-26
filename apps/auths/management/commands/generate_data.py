@@ -13,21 +13,32 @@ class Command(BaseCommand):
     # def __init__(self, *args, **kwargs):
     #     pass
 
-    def _generate_number(self):
+    def _generate_password(self):
         """Generate number"""
 
-        _number_from = 10
-        _number_to = 99
+        _number_from = 1000000000000000000000000
+        _number_to = 9000000000000000000000000
 
-        return random.randint(
+        a = str(random.randint(
             _number_from,
-            _number_to,
+            _number_to,)
         )
+
+        list_a = [
+            'jnbcrgqucjax',
+            'eiwbfogcwegq23',
+            'cqq793g2cnkjnwakoiweh',
+            'wciunjeeeeeeemkajneube',
+            'awkjejncwuy3kjcnawed',
+            'cskjnliaeijiu2hdiuhsjen'
+        ]
+
+        return a + random.choice(list_a)
 
     def _generate_users(self):
         """Generate user/customuser objects"""
 
-        TOTAL_USER_COUNT = 500
+        TOTAL_USER_COUNT = 1
 
         def generate_email():
             _email_patterns: tuple = (
@@ -84,10 +95,10 @@ class Command(BaseCommand):
 
         # Generate users
         #
-        if CustomUser.objects.filter(
-            is_superuser=False
-        ).count() >= TOTAL_USER_COUNT:
-            return
+        # if CustomUser.objects.filter(
+        #     is_superuser=False
+        # ).count() >= TOTAL_USER_COUNT:
+        #     return
 
 
         _: int
@@ -95,11 +106,13 @@ class Command(BaseCommand):
             email = generate_email()
             login = generate_phone_number()
             pin = generate_pin()
+            password = self._generate_password()
 
             custom_user: dict = {
                 'email': email,
                 'login': login,
-                'verificated_code': pin
+                'verificated_code': pin,
+                'password': password
             }
             CustomUser.objects.get_or_create(**custom_user)
 
