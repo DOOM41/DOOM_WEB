@@ -21,7 +21,6 @@ from abstracts.mixins import PayMixin
 # Serializer
 from transactions.serializers import (
     TransSerializers, PaySerialize,
-    BankAccountSerializers
 )
 
 # Web 3
@@ -186,32 +185,4 @@ class TransactionsViewSet(
         }, status=201)
 
 
-class BankAccountViewSet(
-    ModelViewSet,
-    ListAPIView
-):
-    queryset: QuerySet[BankAccount] = BankAccount.objects.all()
-    serializer_class = BankAccountSerializers
 
-    @action(
-        methods=['post'],
-        detail=False,
-        url_path='open-bank-account',
-        permission_classes=(
-            AllowAny,
-        )
-    )
-    def open_bank_account(self, request: Request):
-        a = random.randint(
-            1000000000000000000000000000000,
-            9000000000000000000000000000000
-        )
-
-        owner = request.data['id']
-        address = '0xl' + str(a)
-        balance = 0
-
-        BankAccount.objects.create(
-            owner, address, balance
-        )
-        return Response(status=201)

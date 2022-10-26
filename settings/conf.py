@@ -18,6 +18,13 @@ SECRET_KEY = get_env_variable("SECRET_KEY")
 DEBUG = get_env_variable("DEBUG")
 
 
+REST_FRAMEWORK: dict = {
+    'DEFAULT_PAGINATION_CLASS': (
+        'rest_framework.pagination.PageNumberPagination',
+    ),
+    'PAGE_SIZE': 2
+}
+
 binance_testnet_rpc_url = "HTTP://127.0.0.1:7545"
 web3 = Web3(Web3.HTTPProvider(binance_testnet_rpc_url))
 print(f"Is connected: {web3.isConnected()}")

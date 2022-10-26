@@ -2,17 +2,29 @@ from rest_framework.serializers import (
     Serializer,
     ModelSerializer,
     CharField,
-    IntegerField
+    IntegerField,
 )
-from transactions.models import BankAccount
 from transactions.models import Transactions
+
 
 
 class TransSerializers(ModelSerializer):
 
+    sender = CharField(required=False, read_only=False)
+    receiver = CharField(required=False, read_only=False)
+    status = CharField(required=False, read_only=False)
+    amount = IntegerField(required=False, read_only=False)
+    count_of_transactions = IntegerField(required=False, read_only=False)
+
     class Meta:
         model = Transactions
-        field = '__all__'
+        fields = (
+            'sender',
+            'receiver',
+            'status',
+            'amount',
+            'count_of_transactions',
+        )
 
 
 class PaySerialize(Serializer):
@@ -22,8 +34,4 @@ class PaySerialize(Serializer):
     class Meta:
         field = '__all__'
 
-class BankAccountSerializers(ModelSerializer):
 
-    class Meta:
-        model = BankAccount
-        field = '__all__'
