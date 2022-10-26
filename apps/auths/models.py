@@ -3,7 +3,8 @@ from django.db.models import (
     EmailField,
     CharField,
     QuerySet,
-    BooleanField
+    BooleanField,
+    FileField
 )
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -18,6 +19,7 @@ from rest_framework.response import Response
 # Apps
 from abstracts.validators import APIValidator
 from abstracts.models import AbstractsDateTime
+from auths.validators import validate_svg
 
 
 class CustomUserManager(BaseUserManager):
@@ -84,6 +86,10 @@ class CustomUser(
         'Номер телефона',
         unique=True,
         max_length=11,
+    )
+    svg = FileField(
+        upload_to='staticfiles/qr',
+        validators=[validate_svg]
     )
     is_staff = BooleanField(default=False)
     verificated_code = CharField('Код подтверждения', max_length=5, null=True)
