@@ -37,7 +37,7 @@ def post_save_tempModel(
     # code.svg('live-organ-transplants.svg', scale=1, module_color='black', background='white', quiet_zone=1)
 
 
-    logo = Image.open('staticfiles/15.png')
+    logo = Image.open('staticfiles/qr/15.png')
 
     basewidth = 100
 
@@ -63,7 +63,7 @@ def post_save_tempModel(
            (QRimg.size[1] - logo.size[1]) // 2)
     QRimg.paste(logo, pos)
 
-    QRimg.save(f'staticfiles/QR_{instance.id}.png')
+    QRimg.save(f'staticfiles/qr/QR_{instance.id}.png')
 
     print('QR code generated!')
 
