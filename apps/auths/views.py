@@ -1,6 +1,8 @@
-# Django
+# Python
+from settings.conf import web3
 from typing import Any, Type
 
+# Django
 from django.db.models import QuerySet
 
 # Rest
@@ -11,19 +13,20 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.request import Request
 
+# WEB 3
+from web3 import Web3, Account
+from hexbytes import HexBytes
+
 # Apps
 from abstracts.mixins import SendEmailMixin
-from auths.mixins import ResponseMixinAuth
 from auths.paginators import AbstractPageNumberPaginator
 from auths.serializers import UserSerializer
 from auths.models import CustomUser
-
-
+from bank_account.models import BankAccount
 
 
 class UserViewSet(
     SendEmailMixin,
-    ResponseMixinAuth,
     ModelViewSet,
     RetrieveAPIView,
 ):
@@ -31,7 +34,6 @@ class UserViewSet(
     serializer_class = UserSerializer
     pagination_class: Type[AbstractPageNumberPaginator] = \
         AbstractPageNumberPaginator
-
 
     def list(self, request: Request) -> Response:
 
@@ -60,7 +62,8 @@ class UserViewSet(
         CustomUser.objects.create_user(
             email, login, pin, password
         )
-
+        self.send_to_authentifacate(pin, email)
+        return Response(status=201)
 
     @action(
         methods=['post'],
@@ -84,9 +87,11 @@ class UserViewSet(
             return Response(data={'message': 'Вы авторизованы'}, status=500)
         elif user.verificated_code != pin:
             return Response(data={'message': 'Неверный пин код'}, status=500)
-        user.verificated_code = None
         user.set_password(password)
+        user.verificated_code = None
+        user.is_active = True
         user.save()
+        BankAccount.objects.create_acc(user)
         return Response(status=201)
 
     def retrieve(self, request: Request, pk: str):

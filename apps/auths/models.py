@@ -2,9 +2,7 @@
 from django.db.models import (
     EmailField,
     CharField,
-    QuerySet,
     BooleanField,
-    FileField
 )
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -13,17 +11,20 @@ from django.contrib.auth.models import (
 from django.contrib.auth.base_user import BaseUserManager
 from django.core.exceptions import ValidationError
 
-# Rest
-from rest_framework.response import Response
-
 # Apps
 from abstracts.validators import APIValidator
 from abstracts.models import AbstractsDateTime
-from auths.validators import validate_svg
 
 
-class CustomUserManager(BaseUserManager):
-    def create_user(self, email: str, login: str, pin: str, password: str) -> 'CustomUser':
+class CustomUserManager(
+    BaseUserManager
+):
+    def create_user(self,
+                    email: str,
+                    login: str,
+                    pin: str,
+                    password: str
+                ) -> 'CustomUser':
         if not email:
             raise ValidationError('Email required')
         try:
@@ -34,7 +35,7 @@ class CustomUserManager(BaseUserManager):
                 verificated_code=pin,
             )
             user.set_password(password)
-            user.save(using=self._db)
+            user.save(using=self._db)            
             return user
         except:
             raise APIValidator(
@@ -50,25 +51,26 @@ class CustomUserManager(BaseUserManager):
             login=login,
             password=password
         )
-        user.is_staff: bool = True
         user.is_superuser: bool = True
-        user.is_staff: bool = True
+        user.is_active: bool = True
         user.set_password(password)
         user.save(using=self._db)
+
         return user
 
-    def get_undeleted_user(self, email: str) -> QuerySet['CustomUser']:
+    def get_undeleted_user(self, email: str) -> 'CustomUser':
         """Get undeleted user"""
         try:
-            users: QuerySet[CustomUser] = self.get(
+            user: CustomUser = self.get(
                 email=email,
                 deleted_at=None
             )
-            return users
+            return user
         except:
-            return Response(
-                data={'message': 'Такой пользователь не найден'},
-                status=404
+            raise APIValidator(
+                'Данный пользователь не найден',
+                'message',
+                '400',
             )
 
 
@@ -87,10 +89,7 @@ class CustomUser(
         unique=True,
         max_length=11,
     )
-    svg = FileField(
-        upload_to='staticfiles/qr',
-        validators=[validate_svg]
-    )
+    is_active: BooleanField = BooleanField(default=False)
     is_staff = BooleanField(default=False)
     verificated_code = CharField('Код подтверждения', max_length=5, null=True)
     USERNAME_FIELD = 'email'

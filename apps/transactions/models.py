@@ -9,37 +9,8 @@ from django.db.models import(
 )
 
 #apps
-from auths.models import CustomUser
-from abstracts.models import AbstractsDateTime
+from bank_account.models import BankAccount
 
-
-class BankAccount(AbstractsDateTime):
-    owner: CustomUser = ForeignKey(
-        CustomUser, related_name='Владелец', on_delete=PROTECT,
-    )
-    address: str = CharField(
-        verbose_name="Адрес счета",
-        max_length=200,
-        unique=True,
-        null=False,
-    )
-    private_key: str = CharField(
-        verbose_name="Адрес счета",
-        max_length=200,
-        unique=True,
-        null=False,
-    )
-    balance: int = IntegerField(
-        verbose_name='Остаток',
-        default=0,
-    )
-
-    def __str__(self) -> str:
-        return f'{self.number}'
-
-    class Meta:
-        verbose_name = "Счет"
-        verbose_name_plural = "Счета"
 
 
 class Transactions(Model):

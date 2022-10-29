@@ -1,6 +1,6 @@
 from rest_framework.serializers import (
     ModelSerializer,
-    )
+)
 from auths.models import CustomUser
 
 
