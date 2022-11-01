@@ -54,8 +54,8 @@ class TransactionsQuerySet(SendEmailMixin, QuerySet):
                     {'message': 'Неверные данные'}, field='Неверные данные', code='403')
             return transaction
         except Exception as e:
-            raise APIValidator({'message': f'Неверные данные {e}'},
-                               field='Неверные данные', code='403')
+            raise APIValidator({'message': f'Транзакция не найдена'},
+                               field='result', code='403')
 
 
 class Transactions(Model):
