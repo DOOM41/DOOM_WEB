@@ -35,3 +35,8 @@ class PaySerialize(Serializer):
         field = '__all__'
 
 
+class PinSerialize(Serializer):
+    pin = CharField(required=True)
+
+    class Meta:
+        field = '__all__'

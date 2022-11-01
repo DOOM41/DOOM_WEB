@@ -24,7 +24,7 @@ class CustomUserManager(
                     login: str,
                     pin: str,
                     password: str
-                ) -> 'CustomUser':
+                    ) -> 'CustomUser':
         if not email:
             raise ValidationError('Email required')
         try:
@@ -35,7 +35,7 @@ class CustomUserManager(
                 verificated_code=pin,
             )
             user.set_password(password)
-            user.save(using=self._db)            
+            user.save(using=self._db)
             return user
         except:
             raise APIValidator(
@@ -91,7 +91,9 @@ class CustomUser(
     )
     is_active: BooleanField = BooleanField(default=False)
     is_staff = BooleanField(default=False)
-    verificated_code = CharField('Код подтверждения', max_length=5, null=True)
+    verificated_code = CharField(
+        'Код подтверждения', max_length=5, null=True
+    )
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['login']
     objects = CustomUserManager()

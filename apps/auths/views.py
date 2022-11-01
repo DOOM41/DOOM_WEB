@@ -62,7 +62,7 @@ class UserViewSet(
         CustomUser.objects.create_user(
             email, login, pin, password
         )
-        self.send_to_authentifacate(pin, email)
+        self.send_message(pin, email, 'auths')
         return Response(status=201)
 
     @action(

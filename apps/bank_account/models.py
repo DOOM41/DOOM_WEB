@@ -5,7 +5,7 @@ from django.db.models import (
     ForeignKey,
     PROTECT,
     QuerySet,
-    OneToOneField,
+    IntegerField,
 )
 from settings.base import web3, MNEMONIC
 
@@ -24,7 +24,7 @@ class BankAccountQuerySet(PayMixin, QuerySet):
         acc, mnemonic = web3.eth.account.create_with_mnemonic()
         account: Account = Account.from_mnemonic(mnemonic)
 
-        my_address = '0x4bf9559C84690f153ed3874730F401893363c62c'
+        bank_address = '0x4bf9559C84690f153ed3874730F401893363c62c'
         wallet_address = account.address
         payment = 30
 
@@ -32,7 +32,7 @@ class BankAccountQuerySet(PayMixin, QuerySet):
         private_key = own_account.privateKey
         transaction = self.build_txn(
             web3=web3,
-            from_address=my_address,
+            from_address=bank_address,
             to_address=wallet_address,
             amount=payment,
         )
@@ -72,6 +72,10 @@ class BankAccount(AbstractsDateTime):
         verbose_name='Остаток',
         default=0,
         max_length=200,
+    )
+    count_of_transactions = IntegerField(
+        verbose_name='Количество транзакций',
+        default=0
     )
 
     objects = BankAccountQuerySet().as_manager()

@@ -39,6 +39,7 @@ class ResponseMixin:
                 'results': data
             }
         )
+    
 
 
 class PayMixin:
@@ -76,11 +77,15 @@ class SendEmailMixin:
             pin += str(random.randint(0, 9))
         return pin
 
-    def send_to_authentifacate(self, pin, user_email: str) -> str:
+    def send_message(self, pin, user_email: str, type: str) -> str:
+        messages = {
+            'auths': f"вашу почту",
+            'trans': f"транзакцию"
+        }
         try:
             send_mail(
                 f'Здравствуйте, {user_email}',
-                f"Введите этот пин-код, чтобы подтвердить вашу почту: {pin}",
+                f"Введите этот пин-код, чтобы подтвердить {messages[type]}: {pin}",
                 EMAIL_HOST_USER,
                 [user_email],
                 fail_silently=False,
@@ -91,3 +96,5 @@ class SendEmailMixin:
                 'error',
                 '500',
             )
+    
+
