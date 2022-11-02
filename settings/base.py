@@ -19,6 +19,7 @@ PROJECT_APPS = [
     'auths.apps.AuthsConfig',
     'transactions.apps.TransactionsConfig',
     'bank_account.apps.BankAccountConfig',
+    'qr.apps.QrConfig',
 ]
 
 INSTALLED_APPS = DJANGO_AND_THIRD_PARTY_APPS + PROJECT_APPS
