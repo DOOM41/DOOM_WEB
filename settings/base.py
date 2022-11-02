@@ -10,7 +10,8 @@ DJANGO_AND_THIRD_PARTY_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
-    'web3'
+    'rest_framework_simplejwt',
+    'corsheaders',
 ]
 
 PROJECT_APPS = [

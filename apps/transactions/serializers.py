@@ -28,11 +28,15 @@ class TransSerializers(ModelSerializer):
 
 
 class PaySerialize(Serializer):
-    wallet_address = CharField(required=False)
-    private_key = CharField(required=False)
-    payment = IntegerField(required=False)
+    payment = IntegerField(required=True)
+    receiver = CharField(required=True, read_only=False)
 
     class Meta:
         field = '__all__'
 
 
+class PinSerialize(Serializer):
+    pin = CharField(required=True)
+
+    class Meta:
+        field = '__all__'
