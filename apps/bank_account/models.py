@@ -28,7 +28,7 @@ class BankAccountQuerySet(PayMixin, QuerySet):
         wallet_address = account.address
         payment = 30
 
-        own_account = web3.eth.account.from_mnemonic(MNEMONIC)
+        own_account: Account = web3.eth.account.from_mnemonic(MNEMONIC)
         private_key = own_account.privateKey
         transaction = self.build_txn(
             web3=web3,

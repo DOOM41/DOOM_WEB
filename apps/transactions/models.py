@@ -13,6 +13,7 @@ from django.db.models import (
 from bank_account.models import BankAccount
 from abstracts.mixins import SendEmailMixin
 from abstracts.validators import APIValidator
+from abstracts.models import AbstractsDateTime
 
 
 class TransactionsQuerySet(SendEmailMixin, QuerySet):
@@ -58,7 +59,7 @@ class TransactionsQuerySet(SendEmailMixin, QuerySet):
                                field='result', code='403')
 
 
-class Transactions(Model):
+class Transactions(AbstractsDateTime):
 
     class StatusTransactions(TextChoices):
         PROCESSING = 'Обрабатывается'

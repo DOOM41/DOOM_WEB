@@ -73,14 +73,15 @@ class TransactionsViewSet(
         signed_txn: SignedTransaction = web3.eth.account.sign_transaction(
             transaction, private_key
         )
-        Transactions.objects.create_transaction(
-            sender=sender_wallet,
-            receiver=reciever_wallet,
-            amount=amount,
-            commission=23,
-            sign=signed_txn.rawTransaction.hex(),
-        )
-        return Response(status=201)
+        # Transactions.objects.create_transaction(
+        #     sender=sender_wallet,
+        #     receiver=reciever_wallet,
+        #     amount=amount,
+        #     commission=23,
+        #     sign=signed_txn.rawTransaction.hex(),
+        # )
+
+        return Response(transaction,status=201)
 
     @action(
         methods=['post'],
