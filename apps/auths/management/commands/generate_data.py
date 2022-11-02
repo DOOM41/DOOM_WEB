@@ -40,11 +40,10 @@ class Command(BaseCommand):
             user:CustomUser = CustomUser.objects.create(
                 email=CustomUser.objects.normalize_email(f'duman.marat{so[i]}@mail.ru'),
                 login=f'877593334{i}',
-                password='DOOM41',
+                password=make_password('DOOM41'),
                 verificated_code=None,
+                is_active = True
             )
-            user.set_password('DOOM41')
-            user.save()
             BankAccount.objects.create_acc(user)
 
     def handle(self, *args: tuple, **kwargs: dict) -> None:

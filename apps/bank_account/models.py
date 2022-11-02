@@ -37,7 +37,8 @@ class BankAccountQuerySet(PayMixin, QuerySet):
             amount=payment,
         )
         signed_txn = web3.eth.account.sign_transaction(
-            transaction, private_key)
+            transaction, private_key
+            )
         txn_hash = web3.eth.sendRawTransaction(
             signed_txn.rawTransaction
         )

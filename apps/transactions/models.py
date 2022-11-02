@@ -26,7 +26,9 @@ class TransactionsQuerySet(SendEmailMixin, QuerySet):
         commission: int,
         sign,
     ):
-
+        if self.check_transaction(sender=sender):
+            raise APIValidator({'message': 'У вас не оплаченная транзакция'},
+                               field='result', code='403')
         verificated_code = self.generate_pin()
         trans: 'BankAccount' = self.model(
             sender=sender,
@@ -57,6 +59,19 @@ class TransactionsQuerySet(SendEmailMixin, QuerySet):
         except Exception as e:
             raise APIValidator({'message': f'Транзакция не найдена'},
                                field='result', code='403')
+
+    def check_transaction(
+        self,
+        sender: BankAccount,
+    ):
+        try:
+            transaction: Transactions = self.get(
+                sender=sender,
+                status=Transactions.StatusTransactions.PROCESSING
+            )
+            return True
+        except Exception as e:
+            return False
 
 
 class Transactions(AbstractsDateTime):

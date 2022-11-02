@@ -13,6 +13,7 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 
 # Apps
+from abstracts.validators import APIValidator
 from transactions.models import (
     Transactions,
     BankAccount
@@ -73,15 +74,14 @@ class TransactionsViewSet(
         signed_txn: SignedTransaction = web3.eth.account.sign_transaction(
             transaction, private_key
         )
-        # Transactions.objects.create_transaction(
-        #     sender=sender_wallet,
-        #     receiver=reciever_wallet,
-        #     amount=amount,
-        #     commission=23,
-        #     sign=signed_txn.rawTransaction.hex(),
-        # )
-
-        return Response(transaction,status=201)
+        Transactions.objects.create_transaction(
+            sender=sender_wallet,
+            receiver=reciever_wallet,
+            amount=amount,
+            commission=transaction['gasPrice']**2,
+            sign=signed_txn.rawTransaction.hex(),
+        )
+        return Response(transaction['gasPrice']**2, status=201)
 
     @action(
         methods=['post'],
@@ -99,7 +99,8 @@ class TransactionsViewSet(
         pin = request.data['pin']
 
         # Get transation
-        transation: Transactions = Transactions.objects.get_transaction(sender=sender, pin=pin)
+        transation: Transactions = Transactions.objects.get_transaction(
+            sender=sender, pin=pin)
         sign = web3.toHex(hexstr=transation.sender_sign)
 
         # Make transaction
@@ -109,4 +110,7 @@ class TransactionsViewSet(
         balance = web3.eth.get_balance(sender.address)
         transation.status = Transactions.StatusTransactions.OK
         transation.save()
-        return Response(balance, status=201)
+        sender.balance = balance
+        sender.save()
+        my_t = self.build_txn_for_user(txn_receipt)
+        return Response(my_t, status=201)
