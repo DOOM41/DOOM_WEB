@@ -24,7 +24,7 @@ from abstracts.mixins import PayMixin
 
 # Serializer
 from transactions.serializers import (
-    TransSerializers, PaySerialize,
+    TransSendedSerializers, PaySerialize,
 )
 
 # Web 3
@@ -39,7 +39,7 @@ class TransactionsViewSet(
     PayMixin,
 ):
     queryset: QuerySet[Transactions] = Transactions.objects.all()
-    serializer_class = TransSerializers
+    serializer_class = TransSendedSerializers
 
     @action(
         methods=['post'],
@@ -110,7 +110,5 @@ class TransactionsViewSet(
         balance = web3.eth.get_balance(sender.address)
         transation.status = Transactions.StatusTransactions.OK
         transation.save()
-        sender.balance = balance
-        sender.save()
-        my_t = self.build_txn_for_user(txn_receipt)
+        my_t = self.build_txn_for_user(txn_receipt,transation.sender,transation.receiver)
         return Response(my_t, status=201)

@@ -9,7 +9,7 @@ from django.db.models import QuerySet
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.request import Request
 
@@ -18,17 +18,19 @@ from web3 import Web3, Account
 from hexbytes import HexBytes
 
 # Apps
-from abstracts.mixins import SendEmailMixin
-from auths.paginators import AbstractPageNumberPaginator
+from abstracts.mixins import SendEmailMixin, ResponseMixin
+from abstracts.paginators import AbstractPageNumberPaginator
 from auths.serializers import UserSerializer
 from auths.models import CustomUser
 from bank_account.models import BankAccount
+from bank_account.serializers import BankAccountSerializer
 
 
 class UserViewSet(
     SendEmailMixin,
     ModelViewSet,
     RetrieveAPIView,
+    ResponseMixin,
 ):
     queryset: QuerySet[CustomUser] = CustomUser.objects.all()
     serializer_class = UserSerializer
@@ -94,18 +96,28 @@ class UserViewSet(
         BankAccount.objects.create_acc(user)
         return Response(status=201)
 
-    def retrieve(self, request: Request, pk: str):
-        try:
-            serializer: UserSerializer = \
-                UserSerializer(
-                    self.queryset.get(id=pk)
-                )
-        except:
-            return Response(
-                data={'message': 'Такой пользователь не найден'},
-                status=404
+    @action(
+        methods=['get'],
+        detail=False,
+        url_path='get-me',
+        permission_classes=(
+            IsAuthenticated,
+        )
+    )
+    def get_me(self, request: Request):
+        user: CustomUser = request.user
+        serializer: UserSerializer = \
+            UserSerializer(
+                self.queryset.get(id=user.id)
             )
+        bank_acc = BankAccount.objects.get(owner=user)
+        bank_acc_ser: BankAccountSerializer = BankAccountSerializer(
+            bank_acc
+        )
         return Response(
-            data=serializer.data,
+            data={
+                'user': serializer.data,
+                'banc_acc': bank_acc_ser.data,
+            },
             status=201
         )

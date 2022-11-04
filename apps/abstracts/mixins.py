@@ -11,7 +11,7 @@ from rest_framework.response import Response
 
 # Apps
 from abstracts.validators import APIValidator
-from auths.paginators import (
+from abstracts.paginators import (
     AbstractPageNumberPaginator,
     AbstractLimitOffsetPaginator
 )
@@ -70,7 +70,7 @@ class PayMixin:
         }
         return txn
 
-    def build_txn_for_user(self,txn_receipt):
+    def build_txn_for_user(self,txn_receipt,sender,reciever):
         my_t = {}
         for key, value in txn_receipt.items():
             try:
@@ -81,6 +81,8 @@ class PayMixin:
                 my_t[key] = value
             except:
                 continue
+        sender.save()
+        reciever.save()
         return my_t
 
 

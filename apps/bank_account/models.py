@@ -81,6 +81,11 @@ class BankAccount(AbstractsDateTime):
 
     objects = BankAccountQuerySet().as_manager()
 
+    def save(self):
+        balance = web3.eth.get_balance(self.address)
+        self.balance = balance
+        return super().save()
+
     def __str__(self) -> str:
         return f'{self.owner.email}, {self.address}'
 
