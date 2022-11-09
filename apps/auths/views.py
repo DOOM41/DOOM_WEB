@@ -21,15 +21,16 @@ from web3 import Web3, Account
 from hexbytes import HexBytes
 
 # Apps
-from abstracts.mixins import SendEmailMixin, ResponseMixin
+from abstracts.mixins import (
+    SendEmailMixin,
+    ResponseMixin,
+    GenerateImageMixin
+)
 from abstracts.paginators import AbstractPageNumberPaginator
 from auths.serializers import UserSerializer
 from auths.models import CustomUser
 from bank_account.models import BankAccount
 from bank_account.serializers import BankAccountSerializer
-
-#OpenAi
-import openai
 
 
 class UserViewSet(
@@ -37,6 +38,7 @@ class UserViewSet(
     ModelViewSet,
     RetrieveAPIView,
     ResponseMixin,
+    GenerateImageMixin
 ):
     queryset: QuerySet[CustomUser] = CustomUser.objects.all()
     serializer_class = UserSerializer
@@ -120,24 +122,12 @@ class UserViewSet(
         bank_acc_ser: BankAccountSerializer = BankAccountSerializer(
             bank_acc
         )
-        response = openai.Image.create(
-            prompt="Ulan ride on horse",
-            n=1,
-            size="512x512"
-        )
-        image_url = response['data'][0]['url']
-
-        urlretrieve(image_url, os.path.join(BASE_DIR, f'media/{user.id}.png'))
-        user.avatar = os.path.join(BASE_DIR, f'media/{user.id}.png')
-        user.save()
+        img_url = self.generate_img_by_nickname(user)
         return Response(
             data={
                 'user': serializer.data,
                 'banc_acc': bank_acc_ser.data,
-                'img': response['data'][0]['url']
+                'img': img_url
             },
             status=201
         )
-    
-
-

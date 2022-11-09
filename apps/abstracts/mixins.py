@@ -1,13 +1,21 @@
 # Python
 from typing import Any, Optional, Union
+from urllib.request import urlretrieve
 import random
+import os
 
 # Django
-from django.core.mail import send_mail
 from settings.base import EMAIL_HOST_USER
+from django.core.mail import send_mail
+from settings.conf import BASE_DIR
 
 # Rest
 from rest_framework.response import Response
+
+# Third
+from web3 import Web3
+from hexbytes import HexBytes
+import openai
 
 # Apps
 from abstracts.validators import APIValidator
@@ -15,8 +23,7 @@ from abstracts.paginators import (
     AbstractPageNumberPaginator,
     AbstractLimitOffsetPaginator
 )
-from web3 import Web3
-from hexbytes import HexBytes
+from auths.models import CustomUser
 
 
 class ResponseMixin:
@@ -70,7 +77,7 @@ class PayMixin:
         }
         return txn
 
-    def build_txn_for_user(self,txn_receipt,sender,reciever):
+    def build_txn_for_user(self, txn_receipt, sender, reciever):
         my_t = {}
         for key, value in txn_receipt.items():
             try:
@@ -111,6 +118,32 @@ class SendEmailMixin:
         except Exception as e:
             raise APIValidator(
                 f'Ошибка отправки {e}',
+                'error',
+                '500',
+            )
+
+
+class GenerateImageMixin:
+
+    def generate_img_by_nickname(self, user: CustomUser):
+        try:
+            response = openai.Image.create(
+                prompt='Duman',
+                n=1,
+                size="512x512"
+            )
+            image_url = response['data'][0]['url']
+            image_dir = os.path.join(BASE_DIR, f'media/{user.id}.png')
+            urlretrieve(
+                image_url,
+                image_dir
+            )
+            user.avatar = image_dir
+            user.save()
+            return image_url
+        except Exception as e:
+            raise APIValidator(
+                f'Ошибка отправки генерации {e}',
                 'error',
                 '500',
             )
