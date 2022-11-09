@@ -32,7 +32,6 @@ from eth_account.datastructures import (
     SignedTransaction,
 )
 
-
 class TransactionsViewSet(
     ModelViewSet,
     ListAPIView,

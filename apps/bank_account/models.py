@@ -49,7 +49,7 @@ class BankAccountQuerySet(PayMixin, QuerySet):
             private_key=account.privateKey.hex(),
             balance=str(balance),
         )
-        acc_.save(using=self._db)
+        acc_.save()
         return acc_
 
 

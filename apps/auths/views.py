@@ -1,9 +1,12 @@
 # Python
 from settings.conf import web3
 from typing import Any, Type
+from urllib.request import urlretrieve
+import os
 
 # Django
 from django.db.models import QuerySet
+from settings.conf import BASE_DIR
 
 # Rest
 from rest_framework.generics import RetrieveAPIView
@@ -24,6 +27,9 @@ from auths.serializers import UserSerializer
 from auths.models import CustomUser
 from bank_account.models import BankAccount
 from bank_account.serializers import BankAccountSerializer
+
+#OpenAi
+import openai
 
 
 class UserViewSet(
@@ -114,10 +120,24 @@ class UserViewSet(
         bank_acc_ser: BankAccountSerializer = BankAccountSerializer(
             bank_acc
         )
+        response = openai.Image.create(
+            prompt="Ulan ride on horse",
+            n=1,
+            size="512x512"
+        )
+        image_url = response['data'][0]['url']
+
+        urlretrieve(image_url, os.path.join(BASE_DIR, f'media/{user.id}.png'))
+        user.avatar = os.path.join(BASE_DIR, f'media/{user.id}.png')
+        user.save()
         return Response(
             data={
                 'user': serializer.data,
                 'banc_acc': bank_acc_ser.data,
+                'img': response['data'][0]['url']
             },
             status=201
         )
+    
+
+

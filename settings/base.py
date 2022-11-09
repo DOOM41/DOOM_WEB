@@ -9,6 +9,8 @@ DJANGO_AND_THIRD_PARTY_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'openai',
+    'web3',
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',

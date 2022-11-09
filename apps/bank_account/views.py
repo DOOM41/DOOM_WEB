@@ -6,10 +6,9 @@ from django.db.models import QuerySet
 # Rest
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.generics import ListAPIView
-from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 
 # Apps
 from auths.models import CustomUser
@@ -18,18 +17,13 @@ from bank_account.models import (
 )
 from transactions.models import Transactions
 from transactions.serializers import (
-    TransSendedSerializers, 
-    TransGettedSerializers
+    TransSendedSerializers,
 )
 from abstracts.mixins import ResponseMixin
 from abstracts.paginators import (
     AbstractPageNumberPaginator,
 )
 
-# Serializer
-from bank_account.serializers import (
-    BankAccountSerializer
-)
 
 
 class BankAccountViewSet(
@@ -45,26 +39,31 @@ class BankAccountViewSet(
     @action(
         methods=['get'],
         detail=False,
-        url_path='get-my-transactions',
+        url_path='get-my-sended-transactions',
         permission_classes=(
             IsAuthenticated,
         )
     )
     def get_my_sended_transactions(self, request: Request):
         bank_acc = self.queryset.get(owner=request.user)
-        pagination_class = self.pagination_class()
+        pagination_class: AbstractPageNumberPaginator =\
+            self.pagination_class()
         transactions_sended: Transactions = \
             Transactions.objects.filter(sender=bank_acc)
-        trans_sended = TransSendedSerializers(transactions_sended, many=True)
+        objects: list[Any] = pagination_class.paginate_queryset(
+            transactions_sended,
+            request
+        )
+        trans_sended = TransSendedSerializers(objects, many=True)
         return self.get_json_response(
-            data=trans_sended.data, 
-            paginator=pagination_class
+            trans_sended.data,
+            pagination_class
         )
 
     @action(
         methods=['get'],
         detail=False,
-        url_path='get-my-transactions',
+        url_path='get-my-getted-transactions',
         permission_classes=(
             IsAuthenticated,
         )
@@ -74,8 +73,12 @@ class BankAccountViewSet(
         pagination_class = self.pagination_class()
         transactions_getted: Transactions = \
             Transactions.objects.filter(receiver=bank_acc)
-        trans_getted = TransSendedSerializers(transactions_getted, many=True)
+        objects: list[Any] = pagination_class.paginate_queryset(
+            transactions_getted,
+            request
+        )
+        trans_getted = TransSendedSerializers(objects, many=True)
         return self.get_json_response(
-            data=trans_getted.data, 
+            data=trans_getted.data,
             paginator=pagination_class
         )
