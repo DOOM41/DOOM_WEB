@@ -74,6 +74,14 @@ class CustomUserManager(
                 '400',
             )
 
+    def set_user(self, user: 'CustomUser', nick, password):
+        user.set_password(password)
+        user.verificated_code = None
+        user.is_active = True
+        user.nick_name = nick
+        user.save()
+        return user
+
 
 class CustomUser(
     AbstractBaseUser,

@@ -128,7 +128,7 @@ class GenerateImageMixin:
     def generate_img_by_nickname(self, user: CustomUser):
         try:
             response = openai.Image.create(
-                prompt='Duman',
+                prompt=user.nick_name,
                 n=1,
                 size="512x512"
             )

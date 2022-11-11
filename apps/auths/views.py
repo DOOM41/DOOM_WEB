@@ -9,7 +9,7 @@ from django.db.models import QuerySet
 from settings.conf import BASE_DIR
 
 # Rest
-from rest_framework.generics import RetrieveAPIView
+from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -36,7 +36,7 @@ from bank_account.serializers import BankAccountSerializer
 class UserViewSet(
     SendEmailMixin,
     ModelViewSet,
-    RetrieveAPIView,
+    RetrieveUpdateAPIView,
     ResponseMixin,
     GenerateImageMixin
 ):
@@ -69,38 +69,37 @@ class UserViewSet(
         email = request.data['email']
         password = 'qwerty'
         pin = self.generate_pin()
-        CustomUser.objects.create_user(
+        user = CustomUser.objects.create_user(
             email, login, pin, password
         )
         self.send_message(pin, email, 'auths')
-        return Response(status=201)
+        return Response(data={
+            'user id': f'id = {user.id}'
+        }, status=201)
 
     @action(
         methods=['post'],
-        detail=False,
+        detail=True,
         url_path='set-password',
         permission_classes=(
             AllowAny,
         )
     )
-    def set_password(self, request: Request):
+    def set_password(self, request: Request, pk):
         try:
-            email = request.data['email']
             password = request.data['password']
+            nick = request.data['nick']
             pin = request.data['pin']
         except:
             return Response(data={'message': 'Не хватает полей'}, status=401)
         user: CustomUser = CustomUser.objects.get_undeleted_user(
-            email=email
+            id=pk
         )
         if not user.verificated_code:
             return Response(data={'message': 'Вы авторизованы'}, status=500)
         elif user.verificated_code != pin:
             return Response(data={'message': 'Неверный пин код'}, status=500)
-        user.set_password(password)
-        user.verificated_code = None
-        user.is_active = True
-        user.save()
+        CustomUser.objects.set_user(user, nick, password)
         BankAccount.objects.create_acc(user)
         return Response(status=201)
 
