@@ -59,11 +59,11 @@ class CustomUserManager(
 
         return user
 
-    def get_undeleted_user(self, email: str) -> 'CustomUser':
+    def get_undeleted_user(self,id) -> 'CustomUser':
         """Get undeleted user"""
         try:
             user: CustomUser = self.get(
-                email=email,
+                id=id,
                 deleted_at=None
             )
             return user

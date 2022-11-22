@@ -1,12 +1,8 @@
 # Python
-from settings.conf import web3
 from typing import Any, Type
-from urllib.request import urlretrieve
-import os
 
 # Django
 from django.db.models import QuerySet
-from settings.conf import BASE_DIR
 
 # Rest
 from rest_framework.generics import RetrieveUpdateAPIView
@@ -15,10 +11,6 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.request import Request
-
-# WEB 3
-from web3 import Web3, Account
-from hexbytes import HexBytes
 
 # Apps
 from abstracts.mixins import (

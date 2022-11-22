@@ -49,7 +49,7 @@ web3.middleware_onion.inject(geth_poa_middleware, layer=0)
 web3.eth.account.enable_unaudited_hdwallet_features()
 MNEMONIC = get_env_variable("MNEMONIC")
 ABI = get_env_variable("ABI")
-my_contract_address = '0x817FEe66aECe8F7F79809ccD288B0e28e4500272'
+my_contract_address = get_env_variable('ACC')
 
 # ------------------------------------------------
 ROOT_URLCONF = 'settings.urls'

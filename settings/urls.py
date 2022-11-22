@@ -34,7 +34,7 @@ router: DefaultRouter = DefaultRouter(
 )
 
 router.register(
-    'registration', UserViewSet
+    'auths', UserViewSet
 )
 router.register(
     'bank_acc', BankAccountViewSet

@@ -32,6 +32,7 @@ from eth_account.datastructures import (
     SignedTransaction,
 )
 
+
 class TransactionsViewSet(
     ModelViewSet,
     ListAPIView,
@@ -109,5 +110,6 @@ class TransactionsViewSet(
         balance = web3.eth.get_balance(sender.address)
         transation.status = Transactions.StatusTransactions.OK
         transation.save()
-        my_t = self.build_txn_for_user(txn_receipt,transation.sender,transation.receiver)
+        my_t = self.build_txn_for_user(
+            txn_receipt, transation.sender, transation.receiver)
         return Response(my_t, status=201)
