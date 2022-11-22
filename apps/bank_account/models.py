@@ -49,7 +49,7 @@ class BankAccountQuerySet(PayMixin, QuerySet):
             private_key=account.privateKey.hex(),
             balance=str(balance),
         )
-        acc_.save(using=self._db)
+        acc_.save()
         return acc_
 
 
@@ -80,6 +80,11 @@ class BankAccount(AbstractsDateTime):
     )
 
     objects = BankAccountQuerySet().as_manager()
+
+    def save(self):
+        balance = web3.eth.get_balance(self.address)
+        self.balance = balance
+        return super().save()
 
     def __str__(self) -> str:
         return f'{self.owner.email}, {self.address}'

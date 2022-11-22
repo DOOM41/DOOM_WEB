@@ -37,6 +37,9 @@ router.register(
     'registration', UserViewSet
 )
 router.register(
+    'bank_acc', BankAccountViewSet
+)
+router.register(
     'transactions', TransactionsViewSet
 )
 

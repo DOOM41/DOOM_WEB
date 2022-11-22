@@ -3,6 +3,7 @@ from django.db.models import (
     EmailField,
     CharField,
     BooleanField,
+    ImageField,
 )
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -73,6 +74,14 @@ class CustomUserManager(
                 '400',
             )
 
+    def set_user(self, user: 'CustomUser', nick, password):
+        user.set_password(password)
+        user.verificated_code = None
+        user.is_active = True
+        user.nick_name = nick
+        user.save()
+        return user
+
 
 class CustomUser(
     AbstractBaseUser,
@@ -89,6 +98,11 @@ class CustomUser(
         unique=True,
         max_length=11,
     )
+    nick_name = CharField(
+        'Никнейм',
+        max_length=100,
+    )
+    avatar = ImageField(upload_to='media/avatar')
     is_active: BooleanField = BooleanField(default=False)
     is_staff = BooleanField(default=False)
     verificated_code = CharField(

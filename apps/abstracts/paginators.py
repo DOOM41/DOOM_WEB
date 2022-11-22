@@ -17,6 +17,7 @@ class AbstractPageNumberPaginator(PageNumberPagination):
     page_query_param: str = 'page'
     max_page_size: int = 10
 
+
     def get_paginated_response(self, data: list[Any]) -> Response:
         """Overriden method."""
 
