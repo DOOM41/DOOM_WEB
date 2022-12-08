@@ -6,7 +6,7 @@ import os
 
 load_dotenv()
 
-
+ 
 def get_env_variable(env_variable: str) -> str:
     try:
         return os.getenv(env_variable)

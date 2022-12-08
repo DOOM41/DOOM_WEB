@@ -41,6 +41,7 @@ class Command(BaseCommand):
                 email=CustomUser.objects.normalize_email(f'duman.marat{so[i]}@mail.ru'),
                 login=f'877593334{i}',
                 password=make_password('DOOM41'),
+                nick_name="DOOM41",
                 verificated_code=None,
                 is_active = True
             )

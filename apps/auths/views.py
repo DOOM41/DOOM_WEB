@@ -113,12 +113,40 @@ class UserViewSet(
         bank_acc_ser: BankAccountSerializer = BankAccountSerializer(
             bank_acc
         )
-        img_url = self.generate_img_by_nickname(user)
+        # try:
+        #     user.nick_name = request.data['nick']
+        #     user.save()
+        # except:
+        #     pass
+        # self.generate_img_by_nickname(user)
         return Response(
             data={
                 'user': serializer.data,
                 'banc_acc': bank_acc_ser.data,
-                'img': img_url
+            },
+            status=201
+        )
+    
+    @action(
+        methods=['post'],
+        detail=False,
+        url_path='generate-avatar',
+        permission_classes=(
+            IsAuthenticated,
+        )
+    )
+    def generate_avatar(self, request: Request):
+        user: CustomUser = request.user
+        serializer: UserSerializer = \
+            UserSerializer(
+                self.queryset.get(id=user.id)
+            )
+        user.nick_name = request.data['nick']
+        user.save()
+        self.generate_img_by_nickname(user)
+        return Response(
+            data={
+                'user': serializer.data,
             },
             status=201
         )

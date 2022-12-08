@@ -16,7 +16,7 @@ from web3 import Account
 from abstracts.models import AbstractsDateTime
 from abstracts.mixins import PayMixin
 from auths.models import CustomUser
-
+from settings.conf import my_contract_address
 
 class BankAccountQuerySet(PayMixin, QuerySet):
 
@@ -24,7 +24,7 @@ class BankAccountQuerySet(PayMixin, QuerySet):
         acc, mnemonic = web3.eth.account.create_with_mnemonic()
         account: Account = Account.from_mnemonic(mnemonic)
 
-        bank_address = '0x4bf9559C84690f153ed3874730F401893363c62c'
+        bank_address = my_contract_address
         wallet_address = account.address
         payment = 30
 
