@@ -33,8 +33,8 @@ class TransactionsQuerySet(SendEmailMixin, QuerySet):
         trans: 'BankAccount' = self.model(
             sender=sender,
             receiver=receiver,
-            amount=amount,
-            commission=commission,
+            amount=str(amount),
+            commission=str(commission),
             sender_sign=sign,
             verificated_code=verificated_code,
         )
@@ -95,16 +95,18 @@ class Transactions(AbstractsDateTime):
         choices=StatusTransactions.choices,
         default=StatusTransactions.PROCESSING
     )
-    amount = IntegerField(
+    amount = CharField(
         verbose_name='Сумма перевода',
         null=False,
+        max_length=255,
     )
     sender_sign = CharField(
         verbose_name='Подпись отправителя.',
         max_length=255,
     )
-    commission = IntegerField(
+    commission = CharField(
         verbose_name='Сумма комиссии',
+        max_length=255,
         null=False,
     )
     verificated_code = CharField(

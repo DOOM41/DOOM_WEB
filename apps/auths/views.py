@@ -113,12 +113,6 @@ class UserViewSet(
         bank_acc_ser: BankAccountSerializer = BankAccountSerializer(
             bank_acc
         )
-        # try:
-        #     user.nick_name = request.data['nick']
-        #     user.save()
-        # except:
-        #     pass
-        # self.generate_img_by_nickname(user)
         return Response(
             data={
                 'user': serializer.data,

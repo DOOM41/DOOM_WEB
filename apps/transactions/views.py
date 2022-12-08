@@ -51,12 +51,12 @@ class TransactionsViewSet(
     )
     def make_transaction(self, request: Request):
         serializer_class = PaySerialize
+
         # GET users data
         sender: CustomUser = request.user
         email = request.data['email']
         reciever = CustomUser.objects.get_undeleted_user(email)
         amount = request.data['payment']
-
         # GET Bank acc
         sender_wallet: BankAccount = \
             BankAccount.objects.get(owner=sender)
@@ -71,6 +71,7 @@ class TransactionsViewSet(
             to_address=reciever_wallet.address,
             amount=amount,
         )
+
         signed_txn: SignedTransaction = web3.eth.account.sign_transaction(
             transaction, private_key
         )
@@ -81,6 +82,7 @@ class TransactionsViewSet(
             commission=transaction['gasPrice']**2,
             sign=signed_txn.rawTransaction.hex(),
         )
+
         return Response(transaction['gasPrice']**2, status=201)
 
     @action(
