@@ -9,6 +9,7 @@ from rest_framework.routers import DefaultRouter
 
 #Apps
 from apps.auths.views import UserViewSet
+from apps.my_token.views import AddContracts
 from apps.transactions.views import TransactionsViewSet
 from apps.bank_account.views import BankAccountViewSet
 from rest_framework_simplejwt.views import (
@@ -41,6 +42,9 @@ router.register(
 )
 router.register(
     'transactions', TransactionsViewSet
+)
+router.register(
+    'test_web', AddContracts
 )
 
 urlpatterns += [

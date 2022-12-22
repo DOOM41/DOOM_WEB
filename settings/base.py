@@ -3,6 +3,7 @@ from settings.conf import *
 
 DJANGO_AND_THIRD_PARTY_APPS = [
     'django.contrib.admin',
+    'corsheaders',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -13,7 +14,7 @@ DJANGO_AND_THIRD_PARTY_APPS = [
     'web3',
     'rest_framework',
     'rest_framework_simplejwt',
-    'corsheaders',
+    'solcx',
 ]
 
 PROJECT_APPS = [
@@ -21,13 +22,18 @@ PROJECT_APPS = [
     'auths.apps.AuthsConfig',
     'transactions.apps.TransactionsConfig',
     'bank_account.apps.BankAccountConfig',
+    'my_token.apps.MyTokenConfig',
 ]
 
 INSTALLED_APPS = DJANGO_AND_THIRD_PARTY_APPS + PROJECT_APPS
 
+CORS_ALLOW_ALL_ORIGINS = True
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',

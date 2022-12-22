@@ -27,6 +27,7 @@ DEBUG = get_env_variable("DEBUG")
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
+    '172.28.0.128',
 ]
 
 # OpenAi
@@ -36,10 +37,12 @@ openai.api_key = get_env_variable("OPENAI_KEY")
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:8000',
+    'http://172.28.0.128:8000',
+    'http://127.0.0.1:8000'
 ]
 CORS_ALLOWED_ORIGIN_REGEXES = [
-    'http://localhost:8000',
+    'http://172.28.0.128:8000',
+    'http://127.0.0.1:8000/'
 ]
 
 # WEB 3 integration

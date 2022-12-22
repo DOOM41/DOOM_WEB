@@ -120,7 +120,7 @@ class UserViewSet(
             },
             status=201
         )
-    
+
     @action(
         methods=['post'],
         detail=False,
