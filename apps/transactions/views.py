@@ -55,7 +55,7 @@ class TransactionsViewSet(
         # GET users data
         sender: CustomUser = request.user
         email = request.data['email']
-        reciever = CustomUser.objects.get_undeleted_user(email)
+        reciever = CustomUser.objects.get(email=email)
         amount = request.data['payment']
         # GET Bank acc
         sender_wallet: BankAccount = \

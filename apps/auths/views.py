@@ -137,10 +137,11 @@ class UserViewSet(
             )
         user.nick_name = request.data['nick']
         user.save()
-        self.generate_img_by_nickname(user)
+        img = self.generate_img_by_nickname(user)
         return Response(
             data={
                 'user': serializer.data,
+                'image': img,
             },
             status=201
         )

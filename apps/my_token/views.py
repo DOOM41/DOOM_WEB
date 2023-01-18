@@ -1,14 +1,29 @@
+# Python
+from typing import Any, Type
+from abstracts.mixins import PayMixin
+
+# Django
+from settings.conf import web3, MNEMONIC, ABI
+
+# REST
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
+from rest_framework.request import Request
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 
+# APPS
 from transactions.models import Transactions
+from bank_account.models import BankAccount
 
+# THIRDAPPS
 from solcx import compile_source
-from settings.conf import web3,MNEMONIC
+from web3 import Account
 # Create your views here.
 
-class AddContracts(ModelViewSet, ListAPIView):
+
+class AddContracts(ModelViewSet, ListAPIView, PayMixin):
     queryset = Transactions.objects.all()
 
     def list(self, request):
@@ -125,7 +140,8 @@ contract Token {
         contract_id, contract_interface = compiled_sol.popitem()
         abi = contract_interface['abi']
         bytecode = contract_interface['bin']
-        web3.eth.default_account = web3.eth.account.from_mnemonic(MNEMONIC).address
+        web3.eth.default_account = web3.eth.account.from_mnemonic(
+            MNEMONIC).address
         # breakpoint()
         # print(web3.eth.account.from_mnemonic(MNEMONIC))
         con = web3.eth.contract(abi=abi, bytecode=bytecode)
@@ -133,8 +149,68 @@ contract Token {
         tx_receipt = web3.eth.wait_for_transaction_receipt(tx_hash)
         return Response(
             data={
-                # 'abi': abi,
+                'abi': abi,
                 'contract_id': str(tx_receipt.contractAddress),
+            },
+            status=201
+        )
+
+    @action(
+        methods=['get'],
+        detail=False,
+        url_path='token-transact',
+        # permission_classes=(
+        #     IsAuthenticated,
+        # )
+    )
+    def get_my_getted_transactions(self, request: Request):
+        # Contract
+        con_address = '0x418b12248dfa801Aa664D0D07cF57677e36c4864'
+        greeter = web3.eth.contract(
+            address=con_address,
+            abi=ABI
+        )
+
+        # addreses
+        some_addres: BankAccount = BankAccount.objects.get(id=2)
+        account: Account = Account.from_key(some_addres.private_key)
+        web3.eth._default_account = account._address
+        to: BankAccount = BankAccount.objects.get(id=1)
+
+        # functions
+        trans = greeter.functions.transfer(
+            to.address, 10*(10**18)).transact()
+        tx_receipt = web3.eth.wait_for_transaction_receipt(trans)
+        account.sign_transaction(tx_receipt)
+        from_ = greeter.functions.balanceOf(some_addres.address).call()
+        second = greeter.functions.balanceOf(to.address).call()
+        # result = web3.eth.accounts
+
+        return Response(
+            data={
+                'from': from_,
+                'to': second,
+                'tx_receipt': trans,
+            },
+            status=201
+        )
+    
+    @action(
+        methods=['get'],
+        detail=False,
+        url_path='test',
+        # permission_classes=(
+        #     IsAuthenticated,
+        # )
+    )
+    def get_my_getted_transas(self, request: Request):
+        some_addres: BankAccount = BankAccount.objects.get(id=2)
+
+        acc = web3.eth.account.create()
+
+        return Response(
+            data={
+                'acc': acc
             },
             status=201
         )
