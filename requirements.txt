@@ -43,7 +43,7 @@ pandas==1.5.1
 pandas-stubs==1.5.1.221024
 parsimonious==0.8.1
 Pillow==9.3.0
-protobuf==3.19.5
+protobuf==4.25.8
 py-solc-x==1.1.1
 pycodestyle==2.9.1
 pycparser==2.21
